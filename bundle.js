@@ -123,7 +123,22 @@
 	  });
 	}
 	
-	var nodes = (0, _values2.default)(_data.entities);
+	function near(val) {
+	  var radius = arguments.length <= 1 || arguments[1] === undefined ? 100 : arguments[1];
+	
+	  var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+	  return val + Math.random() * radius * plusOrMinus;
+	}
+	
+	var foci = {
+	  'state': { x: width * 0.1, y: height * 0.9 },
+	  'person': { x: width * 0.5, y: height * 0.1 },
+	  'company': { x: width * 0.9, y: height * 0.9 }
+	};
+	
+	var nodes = (0, _values2.default)(_data.entities).map(function (e) {
+	  return (0, _assign2.default)(e, { x: near(foci[e.type].x), y: near(foci[e.type].y) });
+	});
 	
 	var links = _data.relations.map(function (rel) {
 	  return (0, _assign2.default)(rel, {
@@ -131,12 +146,6 @@
 	    target: _data.entities[rel.target]
 	  });
 	});
-	
-	var foci = {
-	  'state': { x: width * 0.1, y: height * 0.9 },
-	  'person': { x: width * 0.5, y: height * 0.1 },
-	  'company': { x: width * 0.9, y: height * 0.9 }
-	};
 	
 	var Svg = function (_React$Component) {
 	  _inherits(Svg, _React$Component);
