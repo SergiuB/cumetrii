@@ -20,7 +20,7 @@ let App = (props) => {
 var size = 100;
 var height = 800;
 var width = 960;
-var charge = -1500;
+var charge = -3000;
 var linkDistance = 100;
 var bigLinkDistance = 300;
 let radius = 25
@@ -29,19 +29,26 @@ function addType(arr, type) {
   return arr.map(item => assign(item, {type}))
 }
 
+
+function near(val, radius = 100) {
+  let plusOrMinus = Math.random() < 0.5 ? -1 : 1
+  return val + Math.random() * radius * plusOrMinus
+}
+
+let foci = {
+'state': {x: width*0.1, y: height*0.9},
+'person': {x: width*0.5, y: height*0.1},
+'company': {x: width*0.9, y: height*0.9}
+};
+
 let nodes = values(entities)
+  .map(e => assign(e, {x: near(foci[e.type].x), y: near(foci[e.type].y)}))
 
 let links = relations
   .map(rel => assign(rel, {
     source: entities[rel.source],
     target: entities[rel.target],
   }))
-
-let foci = {
-  'state': {x: width*0.1, y: height*0.9},
-  'person': {x: width*0.5, y: height*0.1},
-  'company': {x: width*0.9, y: height*0.9}
-};
 
 class Svg extends React.Component {
   componentDidMount(){

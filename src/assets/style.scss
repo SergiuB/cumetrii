@@ -10,6 +10,8 @@ $blue-color: #0074D9;
 $green-color: #2ECC40;
 
 html, body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
 	height: 100%;
 	margin: 0;
 }
@@ -46,5 +48,5 @@ html, body {
 
 
 .pathLabel {
-  text-anchor:middle; font: 16px sans-serif;
+  text-anchor:middle;
 }
