@@ -8,11 +8,11 @@ let entities = {
 }
 
 let relations = [
-  {id:0, source:'dghera', target: 'lpopa', type:'nas'},
-  {id:1, source:'bpopa', target: 'lpopa', type:'tata'},
-  {id:2, source:'aghera', target: 'dghera', type:'sora'},
-  {id:3, source:'aghera', target: 'expert', type:'actionar'},
-  {id:4, source:'bpopa', target: 'pbuc', type:'consilier'},
+  {id:0, source:'dghera', target: 'lpopa', type:'godparent', name:'nas'},
+  {id:1, source:'bpopa', target: 'lpopa', type:'family', name:'tata'},
+  {id:2, source:'aghera', target: 'dghera', type:'family', name:'sora'},
+  {id:3, source:'aghera', target: 'expert', type:'business', name:'actionar'},
+  {id:4, source:'bpopa', target: 'pbuc', type:'employee', name:'consilier'},
 ]
 
 export {entities, relations}

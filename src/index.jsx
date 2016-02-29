@@ -9,6 +9,7 @@ import concat from 'lodash/concat'
 // import 'bootstrap-css-only/css/bootstrap.css'
 // import 'font-awesome/css/font-awesome.css'
 import './assets/style'
+import svgDefsUrl from "./assets/svg-defs.svg"
 
 import {entities, relations} from './data'
 
@@ -58,7 +59,9 @@ class Link extends React.Component {
   }
   render() {
     let link = this.props.data
-    return <path className='link' d={this.linkArc(link)}/>
+    let className = `link ${link.type}`
+    return <path className={className} d={this.linkArc(link)}
+      markerEnd={`url(${svgDefsUrl}#${link.type})`}/>
   }
 }
 
