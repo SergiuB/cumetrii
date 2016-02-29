@@ -20,8 +20,9 @@ let App = (props) => {
 var size = 100;
 var height = 800;
 var width = 960;
-var charge = -1000;
+var charge = -1500;
 var linkDistance = 100;
+let radius = 25
 
 function addType(arr, type) {
   return arr.map(item => assign(item, {type}))
@@ -42,26 +43,67 @@ let foci = {
 };
 
 class Svg extends React.Component {
+  componentDidMount(){
+     var markerNode = this._marker
+
+     markerNode.setAttribute('markerWidth', 6)
+     markerNode.setAttribute('markerHeight', 6)
+     markerNode.setAttribute('refX', radius)
+     markerNode.setAttribute('refY', -1.5)
+     markerNode.setAttribute('orient', 'auto')
+  }
   render() {
     let style = {width: this.props.width, height: this.props.height}
     return <svg style={style}>
+      <defs>
+        <marker ref={m=>this._marker=m} id="triMarker"
+          viewBox="0 -5 10 10">
+        <path d="M0,-5L10,0L0,5"></path>
+      </marker>
+    </defs>
       {this.props.children}
     </svg>
   }
 }
 
 class Link extends React.Component {
+  componentDidMount(){
+     this._tp.setAttribute("startOffset","50%")
+  }
   linkArc(d) {
     var dx = d.target.x - d.source.x,
         dy = d.target.y - d.source.y,
         dr = Math.sqrt(dx * dx + dy * dy);
-    return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+    return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0 1 " + d.target.x + "," + d.target.y;
+  }
+
+  linkTextArc(d) {
+    let target = d.target
+    let source = d.source
+    let dir = 1
+    if (target.x - d.source.x < 0) {
+      [source, target] = [target, source]
+      dir = 0
+    }
+    var dx = target.x - source.x,
+        dy = target.y - source.y,
+        dr = Math.sqrt(dx * dx + dy * dy);
+    return "M" + source.x + "," + source.y + "A" + dr + "," + dr + " 0 0 " + dir + " " + target.x + "," + target.y;
   }
   render() {
     let link = this.props.data
     let className = `link ${link.type}`
-    return <path className={className} d={this.linkArc(link)}
-      markerEnd={`url(${svgDefsUrl}#${link.type})`}/>
+    return <g>
+      <path id={`link${link.id}`} className={className} d={this.linkTextArc(link)}/>
+      <path className={className} d={this.linkArc(link)}
+        markerEnd={`url(#triMarker)`}/>
+      <text className='pathLabel'
+          dy="-12">
+
+          <textPath ref={tp=>this._tp=tp}
+              xlinkHref={`#link${link.id}`}>{link.name}</textPath>
+      </text>
+    </g>
   }
 }
 
@@ -84,8 +126,8 @@ class Graph extends React.Component {
       link => <Link key={link.id} data={link}/>
     )
     return <Svg width={this.props.width} height={this.props.height}>
-      {nodes}
       {links}
+      {nodes}
     </Svg>
   }
 }
