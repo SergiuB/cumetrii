@@ -13,6 +13,7 @@ let relations = [
   {id:2, source:'aghera', target: 'dghera', type:'family', name:'sora'},
   {id:3, source:'aghera', target: 'expert', type:'business', name:'actionar'},
   {id:4, source:'bpopa', target: 'pbuc', type:'employee', name:'consilier'},
+  {id:5, source:'pbuc', target: 'expert', type:'business', name:'contract'},
 ]
 
 export {entities, relations}

@@ -22,6 +22,7 @@ var height = 800;
 var width = 960;
 var charge = -1500;
 var linkDistance = 100;
+var bigLinkDistance = 300;
 let radius = 25
 
 function addType(arr, type) {
@@ -94,7 +95,7 @@ class Link extends React.Component {
     let link = this.props.data
     let className = `link ${link.type}`
     return <g>
-      <path id={`link${link.id}`} className={className} d={this.linkTextArc(link)}/>
+      <path id={`link${link.id}`} className='link-invisible' d={this.linkTextArc(link)}/>
       <path className={className} d={this.linkArc(link)}
         markerEnd={`url(#triMarker)`}/>
       <text className='pathLabel'
@@ -142,7 +143,11 @@ class Home extends React.Component {
       .size([width, height])
       .nodes(this.state.nodes)
       .links(this.state.links)
-      .linkDistance(linkDistance)
+      .linkDistance(d=> {
+        if (d.target.type != d.source.type)
+          return bigLinkDistance
+        return linkDistance
+      })
       .charge(d =>  charge)
       .start();
     force.on('tick', (e) => {
