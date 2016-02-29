@@ -4,12 +4,13 @@ import {Router, Route, IndexRoute, hashHistory} from 'react-router'
 import d3 from 'd3'
 import values from 'lodash/values'
 import assign from 'lodash/assign'
+import concat from 'lodash/concat'
 
 // import 'bootstrap-css-only/css/bootstrap.css'
 // import 'font-awesome/css/font-awesome.css'
 import './assets/style'
 
-import {people, institutions, relations} from './data'
+import {entities, relations} from './data'
 
 let App = (props) => {
   return <div>{props.children}</div>
@@ -19,14 +20,25 @@ var size = 100;
 var height = 800;
 var width = 960;
 var charge = -1000;
+var linkDistance = 100;
 
-let nodes = values(people)
-let links = relations.personToPerson
-  .map(rel => assign({}, rel, {
-    source: people[rel.source],
-    target: people[rel.target],
+function addType(arr, type) {
+  return arr.map(item => assign(item, {type}))
+}
+
+let nodes = values(entities)
+
+let links = relations
+  .map(rel => assign(rel, {
+    source: entities[rel.source],
+    target: entities[rel.target],
   }))
 
+let foci = {
+  'state': {x: width*0.1, y: height*0.9},
+  'person': {x: width*0.5, y: height*0.1},
+  'company': {x: width*0.9, y: height*0.9}
+};
 
 class Svg extends React.Component {
   render() {
@@ -36,8 +48,6 @@ class Svg extends React.Component {
     </svg>
   }
 }
-
-
 
 class Link extends React.Component {
   linkArc(d) {
@@ -54,10 +64,9 @@ class Link extends React.Component {
 
 class Node extends React.Component {
   render() {
-    let style = {fill: "steelblue"}
     let point = this.props.data
-    return <g transform={`translate(${point.x} ${point.y})`} >
-      <circle r={15} style={style}></circle>
+    return <g className={point.type} transform={`translate(${point.x} ${point.y})`} >
+      <circle r={15}></circle>
       <text x={-15} y={-15}>{point.name}</text>
     </g>
   }
@@ -88,10 +97,15 @@ class Home extends React.Component {
       .size([width, height])
       .nodes(this.state.nodes)
       .links(this.state.links)
-      .linkDistance(100)
+      .linkDistance(linkDistance)
       .charge(d =>  charge)
       .start();
-    force.on('tick', () => {
+    force.on('tick', (e) => {
+      var k = 0.1 * e.alpha;
+      nodes.forEach(function(o, i) {
+        o.y += (foci[o.type].y - o.y) * k;
+        o.x += (foci[o.type].x - o.x) * k;
+      });
       this.setState({nodes, links})
     })
   }
